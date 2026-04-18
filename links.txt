@@ -1,0 +1,5 @@
+http://localhost:3000/pokemon
+http://localhost:3000/docs
+
+pokeapi
+supabase paswword cielphantomhive

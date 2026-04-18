@@ -1,0 +1,2 @@
+npm install express mysql2 cors swagger-ui-express swagger-jsdoc
+npm install pg
