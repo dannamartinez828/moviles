@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
 
-// 🔥 PRIMERO creas app
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -17,7 +16,7 @@ const options = {
     info: {
       title: 'API Pokedex',
       version: '1.0.0',
-      description: 'Documentación del microservicio de Pokémon'
+      description: 'Microservicio Pokémon'
     },
     servers: [
       {
@@ -30,20 +29,17 @@ const options = {
 
 const swaggerDocs = swaggerJsDoc(options);
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-app.use(
-  '/api-docs',
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerDocs, {
-    swaggerOptions: {
-      supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
-    },
-  })
-);
-
-// 🔥 DB
+// 🔥 CONEXIÓN DB (con debug)
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false } // 🔥 IMPORTANTE para Supabase
+});
+
+// 🔍 ruta de prueba
+app.get('/', (req, res) => {
+  res.send('🚀 API funcionando');
 });
 
 /**
@@ -51,27 +47,18 @@ const pool = new Pool({
  * /pokemon/nombre/{nombre}:
  *   get:
  *     summary: Obtener un Pokémon por nombre
- *     parameters:
- *       - in: path
- *         name: nombre
- *         required: true
- *         schema:
- *           type: string
- *         description: Nombre del Pokémon
- *     responses:
- *       200:
- *         description: Pokémon encontrado
- *       404:
- *         description: Este pokemon puede estar perdido
  */
 app.get('/pokemon/nombre/:nombre', async (req, res) => {
   try {
     const nombre = req.params.nombre.toLowerCase();
+    console.log("🔍 Buscando:", nombre);
 
     const result = await pool.query(
       'SELECT * FROM pokemon WHERE LOWER(nombre) = $1',
       [nombre]
     );
+
+    console.log("📦 RESULT:", result.rows);
 
     if (result.rows.length === 0) {
       return res.status(404).json({
@@ -82,8 +69,11 @@ app.get('/pokemon/nombre/:nombre', async (req, res) => {
     res.json(result.rows[0]);
 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error.message });
+    console.error("❌ ERROR REAL:", error);
+
+    res.status(500).json({
+      error: 'Error conectando con la base de datos'
+    });
   }
 });
 
