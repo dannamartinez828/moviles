@@ -31,23 +31,18 @@ const swaggerDocs = swaggerJsDoc(options);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// 🔥 CONEXIÓN DB (con debug)
+// 🔥 DB (Supabase)
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false } // 🔥 IMPORTANTE para Supabase
+  ssl: { rejectUnauthorized: false }
 });
 
-// 🔍 ruta de prueba
+// ✅ Ruta base (solo una)
 app.get('/', (req, res) => {
-  res.send('🚀 API funcionando');
+  res.send('🚀 API Pokedex funcionando');
 });
 
-/**
- * @swagger
- * /pokemon/nombre/{nombre}:
- *   get:
- *     summary: Obtener un Pokémon por nombre
- */
+// 🔍 Buscar Pokémon
 app.get('/pokemon/nombre/:nombre', async (req, res) => {
   try {
     const nombre = req.params.nombre.toLowerCase();
@@ -77,15 +72,9 @@ app.get('/pokemon/nombre/:nombre', async (req, res) => {
   }
 });
 
-
-app.get('/', (req, res) => {
-  res.send('🚀 API Pokedex funcionando');
-});
-
-
 // 🔥 servidor
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Servidor en puerto ${PORT}`);
+  console.log(`🚀 Servidor en puerto ${PORT}`);
 });
