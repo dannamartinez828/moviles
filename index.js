@@ -77,6 +77,12 @@ app.get('/pokemon/nombre/:nombre', async (req, res) => {
   }
 });
 
+
+app.get('/', (req, res) => {
+  res.send('🚀 API Pokedex funcionando');
+});
+
+
 // 🔥 servidor
 const PORT = process.env.PORT || 3000;
 
