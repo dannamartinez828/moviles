@@ -17,10 +17,10 @@ const swaggerDocs = {
     description: 'Microservicio Pokémon'
   },
   servers: [
-    {
-      url: 'https://moviles1-production.up.railway.app'
-    }
-  ],
+  {
+    url: '/'
+  }
+],
   paths: {
     '/pokemon/nombre/{nombre}': {
       get: {
@@ -67,7 +67,16 @@ const swaggerDocs = {
   }
 };
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocs, {
+    explorer: true,
+    swaggerOptions: {
+      docExpansion: 'list'
+    }
+  })
+);
 
 /* 🔥 BASE DE DATOS (SUPABASE) */
 const pool = new Pool({
