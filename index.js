@@ -20,15 +20,14 @@ const options = {
     },
     servers: [
       {
-        url: 'https://moviles-production-819b.up.railway.app'
+        url: 'https://moviles1-production.up.railway.app'
       }
     ]
   },
-  apis: ['./index.js'],
+  apis: ['**/*.js'], // 🔥 MUY IMPORTANTE
 };
 
 const swaggerDocs = swaggerJsDoc(options);
-
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // 🔥 DB (Supabase)
@@ -37,10 +36,29 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
-// ✅ Ruta base (solo una)
+// ✅ Ruta base
 app.get('/', (req, res) => {
   res.send('🚀 API Pokedex funcionando');
 });
+
+/**
+ * @swagger
+ * /pokemon/nombre/{nombre}:
+ *   get:
+ *     summary: Obtener un Pokémon por nombre
+ *     parameters:
+ *       - in: path
+ *         name: nombre
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Nombre del Pokémon
+ *     responses:
+ *       200:
+ *         description: Pokémon encontrado
+ *       404:
+ *         description: Este pokemon puede estar perdido
+ */
 
 // 🔍 Buscar Pokémon
 app.get('/pokemon/nombre/:nombre', async (req, res) => {
